@@ -1,0 +1,347 @@
+!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analyse fonctionnelle · myCobot 280 Pi &amp; mechArm 270 Pi · HESTIM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0E2A5C;--ink:#0B1B3A;--blue:#2F6BFF;--mint:#19C39A;--amber:#FFB020;--pink:#FF7EB6;--paper:#F3F7FF;--white:#fff;--line:#D5E0F5;
+--fd:'Bricolage Grotesque','Trebuchet MS',sans-serif;--fb:'Nunito','Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{font-family:var(--fb);color:var(--ink);background:var(--paper);line-height:1.6}
+h1,h2,h3{font-family:var(--fd);line-height:1.15}
+svg{max-width:100%;height:auto;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+/* hero */
+.hero{background:radial-gradient(circle at 80% 20%,#2F6BFF55,transparent 45%),linear-gradient(160deg,#0B1F47,#0E2A5C 60%,#143a7d);color:#fff;padding:28px 0 70px;overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{background:#fff;border-radius:14px;padding:8px 16px;display:flex;align-items:center;min-height:56px}
+.logo img{height:40px;width:auto}
+.wm{font-family:var(--fd);font-weight:800;font-size:26px;letter-spacing:.06em;color:var(--navy)}
+.wm small{display:block;font:600 9px var(--fb);letter-spacing:.14em;color:#5b6b8c}
+.year{background:#ffffff1f;border:1px solid #ffffff44;border-radius:99px;padding:6px 16px;font-weight:700}
+.hgrid{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center;margin-top:46px}
+.hero h1{font-size:clamp(34px,5.4vw,60px);font-weight:800}
+.hero h1 span{display:block;color:var(--mint)}
+.hero p.sub{margin-top:14px;font-size:18px;color:#cfe0ff;max-width:520px}
+.dir{margin-top:22px;font-size:17px}.dir b{color:var(--amber)}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:34px}
+.mem{background:#ffffff14;border:1px solid #ffffff2e;border-radius:14px;padding:12px 16px}
+.mem b{display:block;font-family:var(--fd);font-size:15px}.mem span{font-size:13px;color:#b9cdf5}
+.arm .a1{transform-origin:150px 300px;animation:s1 5s ease-in-out infinite}
+.arm .a2{transform-origin:150px 190px;animation:s2 5s ease-in-out infinite}
+.arm .a3{transform-origin:240px 120px;animation:s3 5s ease-in-out infinite}
+.arm .gr{animation:gr 2.5s ease-in-out infinite;transform-origin:center;transform-box:fill-box}
+@keyframes s1{50%{transform:rotate(14deg)}}@keyframes s2{50%{transform:rotate(-30deg)}}@keyframes s3{50%{transform:rotate(25deg)}}
+@keyframes gr{50%{transform:scaleX(.55)}}
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:#ffffffee;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 20px}
+nav a{white-space:nowrap;text-decoration:none;color:var(--navy);font-weight:700;font-size:14px;padding:6px 14px;border-radius:99px}
+nav a:hover,nav a:focus-visible{background:var(--navy);color:#fff;outline:none}
+/* sections */
+section{padding:56px 0 8px}
+.h{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.h i{font-style:normal;background:var(--blue);color:#fff;font:800 18px var(--fd);width:42px;height:42px;border-radius:12px;display:grid;place-items:center;flex:none}
+.h h2{font-size:clamp(24px,3.4vw,34px);color:var(--navy)}
+.lead{color:#47587c;margin:0 0 20px 56px;max-width:700px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 10px 30px #0e2a5c14}
+.note{background:#FFF6E0;border-left:5px solid var(--amber);border-radius:10px;padding:12px 16px;font-size:14px;margin-top:14px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:14px;font-weight:700}
+.legend span:before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;margin-right:6px;background:var(--c)}
+/* table */
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 12px;font-family:var(--fd)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:hover{background:#EEF4FF}
+.tag{display:inline-block;font-weight:800;padding:2px 10px;border-radius:99px;font-size:13px}
+.fp{background:#DDF7E8;color:#0d6b43}.fc{background:#FFF1D6;color:#8a4a05}
+.f0{color:#c0262d;font-weight:800}
+/* svg shared */
+.flow{stroke-dasharray:8 10;animation:dash 1.2s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-18}}
+.float{animation:fl 4s ease-in-out infinite}@keyframes fl{50%{transform:translateY(-10px)}}
+.blink{animation:bl 4.5s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes bl{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.08)}}
+.tw2{animation:tw 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}@keyframes tw{50%{transform:scale(.3);opacity:.4}}
+.bub{transition:transform .25s}.bub:hover{transform:scale(1.04)}
+.bub{transform-box:fill-box;transform-origin:center}
+.wig{transform-box:fill-box;transform-origin:center;animation:wg 3s ease-in-out infinite}@keyframes wg{50%{transform:scale(1.04)}}
+/* compare */
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.rb{border-radius:18px;padding:18px;color:#fff}
+.rb h3{font-size:20px}.rb ul{margin:10px 0 0 18px;font-size:14px}
+/* FAST */
+.fast{display:grid;grid-template-columns:150px 190px 1fr;gap:26px;align-items:center}
+.fb{border-radius:14px;padding:12px 14px;font-weight:700;font-size:14px;text-align:center}
+.why{background:#E8F2FF;border:2px solid var(--blue);color:var(--navy)}
+.main{background:var(--navy);color:#fff;box-shadow:0 8px 20px #0e2a5c44}
+.br{display:grid;gap:12px;border-left:4px solid var(--navy);padding-left:20px}
+.row{display:grid;grid-template-columns:1fr 26px 1fr;align-items:center;gap:8px;opacity:0;transform:translateX(-24px);transition:.6s}
+.row .ar{height:3px;background:var(--navy);position:relative}.row .ar:after{content:"";position:absolute;right:-1px;top:-5px;border:6px solid transparent;border-left:9px solid var(--navy)}
+.ft{background:#DDF7E8;border:2px solid var(--mint);color:#0d4b31}
+.sol{background:#F1E8FF;border:2px solid #9333EA;color:#4c1590}
+.show .row{opacity:1;transform:none}
+.show .row:nth-child(2){transition-delay:.25s}.show .row:nth-child(3){transition-delay:.5s}.show .row:nth-child(4){transition-delay:.75s}
+/* sim */
+.sim{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+canvas{width:100%;background:linear-gradient(#EAF1FF,#fff);border-radius:16px;border:1px solid var(--line)}
+.ctl label{display:block;font-weight:700;font-size:14px;margin-top:10px}
+.ctl label output{float:right;color:var(--blue)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+button{font:700 14px var(--fb);border:0;border-radius:99px;padding:10px 18px;cursor:pointer;background:var(--blue);color:#fff}
+button.alt{background:var(--navy)}button:hover{filter:brightness(1.12)}button:focus-visible{outline:3px solid var(--amber)}
+.stat{margin-top:12px;background:var(--paper);border-radius:12px;padding:10px 14px;font-size:14px}
+.stat b{color:var(--navy)}
+footer{margin-top:60px;background:var(--ink);color:#b9cdf5;text-align:center;padding:26px 20px;font-size:14px}
+@media(max-width:820px){.hgrid,.sim,.fast{grid-template-columns:1fr}.arm{max-width:300px;margin:auto}.lead{margin-left:0}.br{border-left:0;padding-left:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.row{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+ <div class="top">
+  <div class="logo" id="logo"><img src="hestim-logo.png" alt="Logo HESTIM" onerror="this.parentNode.innerHTML='<div class=wm>HESTIM<small>ENGINEERING &amp; BUSINESS SCHOOL</small></div>'"></div>
+  <div class="year">Année universitaire 2026-2027</div>
+ </div>
+ <div class="hgrid">
+  <div>
+   <h1>Analyse fonctionnelle <span>de deux bras robotisés</span></h1>
+   <p class="sub">myCobot 280 Pi et mechArm 270 Pi : besoin, fonctions de service, SADT, FAST et simulateur de mouvement.</p>
+   <p class="dir">Projet de groupe · 1ère année classe préparatoire (GIL &amp; GC)<br>Sous la direction de <b>Mme Chaymae FAHASSA</b></p>
+  </div>
+  <svg class="arm" viewBox="0 0 320 340" aria-hidden="true">
+   <rect x="90" y="300" width="120" height="26" rx="8" fill="#fff"/><rect x="120" y="270" width="60" height="34" rx="8" fill="#2F6BFF"/>
+   <g class="a1"><rect x="138" y="190" width="24" height="90" rx="12" fill="#fff"/><circle cx="150" cy="190" r="17" fill="#19C39A"/>
+    <g class="a2"><rect x="140" y="110" width="22" height="88" rx="11" fill="#cfe0ff" transform="rotate(35 150 190)"/>
+     <g transform="rotate(35 150 190)"><circle cx="150" cy="110" r="15" fill="#FFB020"/>
+      <g class="a3" style="transform-origin:150px 110px"><rect x="141" y="50" width="18" height="66" rx="9" fill="#fff" transform="rotate(40 150 110)"/>
+       <g transform="rotate(40 150 110)"><g class="gr"><rect x="136" y="30" width="6" height="24" rx="3" fill="#FF7EB6"/><rect x="158" y="30" width="6" height="24" rx="3" fill="#FF7EB6"/></g></g>
+      </g></g></g></g>
+  </svg>
+ </div>
+ <div class="team">
+  <div class="mem"><b>LOUNDOU Nest Junior</b><span>1ère année · Génie industriel et logistique</span></div>
+  <div class="mem"><b>NZAMBA Guy Noé</b><span>1ère année · Génie industriel et logistique</span></div>
+  <div class="mem"><b>HERGAT BONNEVILLE Martine Lenaïc</b><span>1ère année · Génie industriel et logistique</span></div>
+  <div class="mem"><b>WATCHINOU Elom Ethiel</b><span>1ère année · Génie civil</span></div>
+ </div>
+</div></header>
+ 
+<nav><div class="wrap"><a href="#robots">Les robots</a><a href="#bete">Bête à cornes</a><a href="#pieuvre">Pieuvre</a><a href="#tableau">Fonctions</a><a href="#sadt">SADT</a><a href="#fast">FAST</a><a href="#sim">Simulateur</a></div></nav>
+ 
+<main class="wrap">
+<section id="robots"><div class="h"><i>R</i><h2>Les deux robots étudiés</h2></div>
+<p class="lead">Deux petits bras à 6 axes d’Elephant Robotics, pilotés par une carte Raspberry Pi intégrée.</p>
+<div class="cmp">
+ <div class="rb" style="background:linear-gradient(135deg,#2F6BFF,#0E2A5C)"><h3>myCobot 280 Pi</h3><ul><li>6 degrés de liberté</li><li>Rayon d’action : environ 280 mm</li><li>Charge utile : environ 250 g</li><li>Répétabilité : environ ±0,5 mm</li></ul></div>
+ <div class="rb" style="background:linear-gradient(135deg,#19C39A,#0b5d63)"><h3>mechArm 270 Pi</h3><ul><li>6 degrés de liberté</li><li>Rayon d’action : environ 270 mm</li><li>Charge utile : environ 250 g</li><li>Répétabilité : environ ±0,5 mm</li></ul></div>
+</div>
+<div class="note"><b>À confirmer en TP :</b> ces valeurs viennent de la documentation du constructeur. Vérifiez-les sur la fiche technique et sur les robots du laboratoire avant le rendu.</div>
+</section>
+ 
+<section id="bete"><div class="h"><i>1</i><h2>Bête à cornes</h2></div>
+<p class="lead">Expression du besoin : à qui le robot rend-il service, sur quoi agit-il, dans quel but ?</p>
+<div class="panel">
+<svg viewBox="0 0 900 560" role="img" aria-label="Bête à cornes du robot pédagogique">
+ <defs><radialGradient id="bd" cx=".4" cy=".3" r=".9"><stop offset="0" stop-color="#5b8dff"/><stop offset="1" stop-color="#0E2A5C"/></radialGradient>
+ <radialGradient id="ir" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#7fffe0"/><stop offset="1" stop-color="#0b8a78"/></radialGradient></defs>
+ <g stroke="#2F6BFF" stroke-width="4" fill="none" class="flow"><path d="M190 150 Q260 230 365 235"/><path d="M710 150 Q640 230 535 235"/><path d="M450 440 V372"/></g>
+ <g class="bub"><rect x="40" y="30" width="300" height="120" rx="60" fill="#E8F2FF" stroke="#2F6BFF" stroke-width="3"/>
+  <text x="190" y="68" text-anchor="middle" font-family="Nunito" font-size="15" fill="#47587c">À qui rend-il service ?</text>
+  <text x="190" y="94" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="19" fill="#0E2A5C">À l’étudiant, à l’enseignant</text>
+  <text x="190" y="118" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="19" fill="#0E2A5C">et au laboratoire</text></g>
+ <g class="bub"><rect x="560" y="30" width="300" height="120" rx="60" fill="#DDF7E8" stroke="#19C39A" stroke-width="3"/>
+  <text x="710" y="68" text-anchor="middle" font-family="Nunito" font-size="15" fill="#47587c">Sur quoi agit-il ?</text>
+  <text x="710" y="94" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="19" fill="#0d4b31">Sur des objets à saisir,</text>
+  <text x="710" y="118" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="19" fill="#0d4b31">déplacer ou positionner</text></g>
+ <g class="bub"><rect x="250" y="440" width="400" height="100" rx="50" fill="#FFF1D6" stroke="#FFB020" stroke-width="3"/>
+  <text x="450" y="476" text-anchor="middle" font-family="Nunito" font-size="15" fill="#47587c">Dans quel but ?</text>
+  <text x="450" y="500" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="18" fill="#78350F">Réaliser des manipulations programmées,</text>
+  <text x="450" y="522" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="18" fill="#78350F">précises et répétables</text></g>
+ <g class="float">
+  <path d="M385 215 Q350 150 330 95 Q385 120 410 190Z" fill="#FFB020" stroke="#0E2A5C" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M515 215 Q550 150 570 95 Q515 120 490 190Z" fill="#FFB020" stroke="#0E2A5C" stroke-width="4" stroke-linejoin="round"/>
+  <ellipse cx="450" cy="285" rx="125" ry="95" fill="url(#bd)" stroke="#0E2A5C" stroke-width="5"/>
+  <g class="blink"><ellipse cx="405" cy="265" rx="28" ry="36" fill="#fff" stroke="#0E2A5C" stroke-width="3"/><circle cx="408" cy="270" r="21" fill="url(#ir)"/><circle cx="408" cy="272" r="10" fill="#06223a"/><circle cx="400" cy="260" r="7" fill="#fff"/><circle cx="415" cy="279" r="3.5" fill="#fff"/></g>
+  <g class="blink"><ellipse cx="495" cy="265" rx="28" ry="36" fill="#fff" stroke="#0E2A5C" stroke-width="3"/><circle cx="492" cy="270" r="21" fill="url(#ir)"/><circle cx="492" cy="272" r="10" fill="#06223a"/><circle cx="484" cy="260" r="7" fill="#fff"/><circle cx="499" cy="279" r="3.5" fill="#fff"/></g>
+  <ellipse cx="365" cy="305" rx="14" ry="8" fill="#FF7EB6" opacity=".7"/><ellipse cx="535" cy="305" rx="14" ry="8" fill="#FF7EB6" opacity=".7"/>
+  <path d="M432 312 Q450 332 468 312" fill="#fff" stroke="#0E2A5C" stroke-width="3.5" stroke-linecap="round"/>
+  <text x="450" y="355" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="17" fill="#fff" letter-spacing="1">ROBOT PÉDAGOGIQUE</text>
+ </g>
+ <g fill="#FFB020"><path class="tw2" d="M290 250l6 14 14 6-14 6-6 14-6-14-14-6 14-6z"/><path class="tw2" style="animation-delay:.8s" d="M620 330l5 11 11 5-11 5-5 11-5-11-11-5 11-5z"/><path class="tw2" style="animation-delay:1.5s" d="M600 215l4 9 9 4-9 4-4 9-4-9-9-4 9-4z"/></g>
+</svg>
+<p style="text-align:center;font-size:14px;color:#47587c">Produit étudié : myCobot 280 Pi / mechArm 270 Pi</p>
+</div></section>
+ 
+<section id="pieuvre"><div class="h"><i>2</i><h2>Diagramme pieuvre</h2></div>
+<p class="lead">Les relations entre le robot et les éléments de son environnement. Survolez un tentacule pour le mettre en valeur.</p>
+<div class="panel"><svg id="pv" viewBox="0 0 1000 650" role="img" aria-label="Diagramme pieuvre"></svg>
+<div class="legend"><span style="--c:#19C39A">Fonction principale (FP)</span><span style="--c:#FFB020">Fonction contrainte (FC)</span></div></div>
+<div class="note">Les intitulés FP/FC sont une proposition de travail : validez-les avec les consignes de Mme FAHASSA et vos observations au laboratoire.</div>
+</section>
+ 
+<section id="tableau"><div class="h"><i>3</i><h2>Caractérisation des fonctions de service</h2></div>
+<p class="lead">Critères, niveaux et flexibilité pour préparer le cahier des charges fonctionnel.</p>
+<div class="panel tw"><table>
+<thead><tr><th>Réf.</th><th>Fonction de service</th><th>Critère d’appréciation</th><th>Niveau / exigence</th><th>Flexibilité</th></tr></thead><tbody>
+<tr><td><span class="tag fp">FP1</span></td><td>Permettre à l’utilisateur de programmer et commander le robot.</td><td>Prise en main, compatibilité avec l’interface de commande.</td><td>Commandes accessibles, exécution conforme au programme fourni.</td><td>F1 · à confirmer</td></tr>
+<tr><td><span class="tag fp">FP2</span></td><td>Saisir, déplacer et positionner un objet dans la zone de travail.</td><td>Charge utile, portée, répétabilité, type de préhenseur.</td><td>Valeurs à relever dans la fiche constructeur et au laboratoire.</td><td>F1 · selon l’application</td></tr>
+<tr><td><span class="tag fc">FC1</span></td><td>Être alimenté en énergie électrique.</td><td>Tension, courant, puissance, type d’alimentation.</td><td>Respecter les caractéristiques du fabricant.</td><td class="f0">F0 · impératif</td></tr>
+<tr><td><span class="tag fc">FC2</span></td><td>Recevoir et exécuter les instructions de commande.</td><td>Connexion, compatibilité logicielle, temps de réponse.</td><td>Compatibilité avec les outils disponibles au TP.</td><td>F1 · à vérifier</td></tr>
+<tr><td><span class="tag fc">FC3</span></td><td>Fonctionner dans l’environnement du laboratoire.</td><td>Encombrement, éclairage, température, surface disponible.</td><td>Respect des conditions constructeur et du règlement du laboratoire.</td><td>F1 · selon le local</td></tr>
+<tr><td><span class="tag fc">FC4</span></td><td>Assurer la sécurité des utilisateurs et du matériel.</td><td>Stabilité, risques de collision ou de pincement, arrêt du mouvement.</td><td>Respecter les consignes de sécurité et la supervision du TP.</td><td class="f0">F0 · impératif</td></tr>
+<tr><td><span class="tag fc">FC5</span></td><td>Rester stable pendant les manipulations.</td><td>Fixation, glissement, vibrations du support.</td><td>Base fixée ou posée sur un support stable adapté.</td><td class="f0">F0 · impératif</td></tr>
+</tbody></table></div>
+<div class="note">F0 = exigence non négociable ; F1 = marge de choix possible. Complétez les niveaux chiffrés après avoir identifié le modèle exact.</div>
+</section>
+ 
+<section id="sadt"><div class="h"><i>4</i><h2>SADT niveau A-0</h2></div>
+<p class="lead">Ce que fait le robot : entrées, sorties, ce qui le contrôle et ce qui le fait fonctionner.</p>
+<div class="panel"><svg viewBox="0 0 1000 560" role="img" aria-label="Diagramme SADT A-0">
+<defs><marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0E2A5C"/></marker></defs>
+<g stroke="#0E2A5C" stroke-width="4" marker-end="url(#ah)"><path d="M70 280H355"/><path d="M645 280H930"/><path d="M430 70V195"/><path d="M570 70V195"/><path d="M430 510V345"/><path d="M570 510V345"/></g>
+<g stroke="#fff" stroke-width="3" class="flow" fill="none"><path d="M70 280H350"/><path d="M650 280H925"/><path d="M430 70V190"/><path d="M570 70V190"/><path d="M430 505V350"/><path d="M570 505V350"/></g>
+<rect class="wig" x="360" y="200" width="280" height="140" rx="18" fill="#0E2A5C"/>
+<text x="500" y="262" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="20" fill="#fff">Manipuler un objet</text>
+<text x="500" y="288" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="20" fill="#fff">selon une consigne</text>
+<rect x="590" y="310" width="44" height="24" rx="8" fill="#19C39A"/><text x="612" y="327" text-anchor="middle" font-weight="800" font-size="14" fill="#06322a">A-0</text>
+<g font-family="Nunito" font-size="14" fill="#0B1B3A"><g font-weight="800" fill="#2F6BFF"><text x="70" y="232">ENTRÉES</text><text x="935" y="232" text-anchor="end">SORTIES</text><text x="50" y="40">CONTRÔLES</text><text x="50" y="545">MÉCANISMES</text></g>
+<text x="70" y="256">Objet à manipuler</text><text x="70" y="316">Consigne de</text><text x="70" y="334">l’utilisateur</text>
+<text x="935" y="256" text-anchor="end">Objet saisi, déplacé</text><text x="935" y="316" text-anchor="end">et positionné</text>
+<text x="420" y="58" text-anchor="end">Programme et réglages</text><text x="580" y="58">Consignes de sécurité,</text><text x="580" y="76">limites du constructeur</text>
+<text x="420" y="530" text-anchor="end">Robot : 6 axes + pince</text><text x="580" y="530">Alimentation, Raspberry Pi,</text><text x="580" y="548">ordinateur</text></g>
+</svg></div></section>
+ 
+<section id="fast"><div class="h"><i>5</i><h2>Diagramme F.A.S.T.</h2></div>
+<p class="lead">Du pourquoi (le besoin) au comment (les solutions techniques).</p>
+<div class="panel"><div class="fast" id="fastbox">
+ <div class="fb why">POURQUOI ?<br>Former et réaliser des manipulations</div>
+ <div class="fb main">FONCTION PRINCIPALE<br>Manipuler un objet selon une consigne</div>
+ <div class="br">
+  <div class="row"><div class="fb ft">FT1 · Saisir et maintenir l’objet</div><div class="ar"></div><div class="fb sol">Préhenseur / pince</div></div>
+  <div class="row"><div class="fb ft">FT2 · Déplacer le bras</div><div class="ar"></div><div class="fb sol">Articulations motorisées et structure du bras</div></div>
+  <div class="row"><div class="fb ft">FT3 · Positionner et relâcher</div><div class="ar"></div><div class="fb sol">Programme de commande et interface logicielle</div></div>
+  <div class="row"><div class="fb ft">FT4 · Alimenter le système</div><div class="ar"></div><div class="fb sol">Alimentation électrique et câblage</div></div>
+ </div></div>
+ <div class="legend"><span style="--c:#E8F2FF">Finalité</span><span style="--c:#0E2A5C">Fonction principale</span><span style="--c:#19C39A">Fonctions techniques</span><span style="--c:#9333EA">Solutions techniques</span></div></div>
+</section>
+ 
+<section id="sim"><div class="h"><i>6</i><h2>Simulateur du bras</h2></div>
+<p class="lead">Bougez les articulations à la main, ou lancez un cycle automatique de prise et de dépose.</p>
+<div class="panel sim">
+ <canvas id="cv" width="760" height="460" aria-label="Simulation du bras robotisé"></canvas>
+ <div class="ctl">
+  <label>Épaule <output id="o1"></output><input id="s1" type="range" min="20" max="160" value="90"></label>
+  <label>Coude <output id="o2"></output><input id="s2" type="range" min="-150" max="150" value="0"></label>
+  <label>Poignet <output id="o3"></output><input id="s3" type="range" min="-150" max="150" value="0"></label>
+  <label>Ouverture de la pince <output id="o4"></output><input id="s4" type="range" min="0" max="100" value="100"></label>
+  <div class="btns"><button id="demo">Lancer le cycle</button><button class="alt" id="rst">Réinitialiser</button></div>
+  <div class="stat" id="st">Mode manuel. Déplacez les curseurs.</div>
+ </div>
+</div></section>
+</main>
+<footer>HESTIM · Classe préparatoire 1ère année GIL &amp; GC · Analyse fonctionnelle · 2026-2027<br>LOUNDOU Nest Junior · NZAMBA Guy Noé · HERGAT BONNEVILLE Martine Lenaïc · WATCHINOU Elom Ethiel · Sous la direction de Mme Chaymae FAHASSA</footer>
+ 
+<script>
+/* ---------- Pieuvre ---------- */
+(function(){
+const svg=document.getElementById('pv'),C={x:500,y:325},NS='http://www.w3.org/2000/svg';
+const N=[
+ {r:'FP1',t:'Utilisateur / opérateur',l:'programmer et commander',x:150,y:90,k:'fp'},
+ {r:'FP2',t:'Objet à manipuler',l:'saisir, déplacer, positionner',x:850,y:90,k:'fp'},
+ {r:'FC1',t:'Énergie électrique',l:'être alimenté',x:90,y:330,k:'fc'},
+ {r:'FC2',t:'Ordinateur / commande',l:'recevoir les instructions',x:910,y:330,k:'fc'},
+ {r:'FC3',t:'Environnement du labo',l:'fonctionner en labo',x:190,y:570,k:'fc'},
+ {r:'FC4',t:'Sécurité des personnes',l:'limiter les risques',x:500,y:610,k:'fc'},
+ {r:'FC5',t:'Support / plan de travail',l:'rester stable',x:810,y:570,k:'fc'}];
+const col={fp:['#DDF7E8','#19C39A','#0d4b31'],fc:['#FFF1D6','#FFB020','#78350F']};
+const e=(n,a,p)=>{const o=document.createElementNS(NS,n);for(const k in a)o.setAttribute(k,a[k]);(p||svg).appendChild(o);return o};
+const tg=e('g',{}),ng=e('g',{});
+N.forEach((n,i)=>{
+ const c=col[n.k],mx=(n.x+C.x)/2,my=(n.y+C.y)/2,dx=n.x-C.x,dy=n.y-C.y,L=Math.hypot(dx,dy);
+ const qx=mx-dy/L*55*(i%2?1:-1),qy=my+dx/L*55*(i%2?1:-1);
+ const g=e('g',{style:'cursor:pointer'},tg);
+ const d=`M${C.x} ${C.y} Q${qx} ${qy} ${n.x} ${n.y}`;
+ const p=e('path',{d,fill:'none',stroke:c[1],'stroke-width':14,'stroke-linecap':'round',opacity:.55},g);
+ e('path',{d,fill:'none',stroke:'#fff','stroke-width':3,class:'flow'},g);
+ const lx=.25*C.x+.5*qx+.25*n.x,ly=.25*C.y+.5*qy+.25*n.y;
+ const w=n.l.length*6.6+16;
+ e('rect',{x:lx-w/2,y:ly-11,width:w,height:22,rx:11,fill:'#fff',stroke:c[1]},g);
+ const tx=e('text',{x:lx,y:ly+4,'text-anchor':'middle','font-size':12,'font-weight':700,fill:c[2],'font-family':'Nunito'},g);tx.textContent=n.r+' : '+n.l;
+ g.onmouseenter=()=>p.setAttribute('opacity',1);g.onmouseleave=()=>p.setAttribute('opacity',.55);
+ const b=e('g',{class:'bub'},ng);
+ e('rect',{x:n.x-95,y:n.y-28,width:190,height:56,rx:28,fill:c[0],stroke:c[1],'stroke-width':3},b);
+ const t=e('text',{x:n.x,y:n.y+5,'text-anchor':'middle','font-size':14,'font-weight':800,fill:c[2],'font-family':'Bricolage Grotesque'},b);t.textContent=n.r+' · '+n.t;
+});
+const o=e('g',{class:'wig'});
+e('circle',{cx:C.x,cy:C.y,r:88,fill:'#0E2A5C',stroke:'#2F6BFF','stroke-width':5},o);
+[[-28],[28]].forEach(([x])=>{e('ellipse',{cx:C.x+x,cy:C.y-22,rx:13,ry:17,fill:'#fff',class:'blink'},o);e('circle',{cx:C.x+x+2,cy:C.y-20,r:7,fill:'#0b8a78'},o)});
+const t1=e('text',{x:C.x,y:C.y+30,'text-anchor':'middle','font-size':16,'font-weight':800,fill:'#fff','font-family':'Bricolage Grotesque'},o);t1.textContent='ROBOT';
+const t2=e('text',{x:C.x,y:C.y+50,'text-anchor':'middle','font-size':13,'font-weight':700,fill:'#9fc0ff','font-family':'Bricolage Grotesque'},o);t2.textContent='PÉDAGOGIQUE';
+})();
+/* ---------- FAST reveal ---------- */
+new IntersectionObserver((en,ob)=>en.forEach(x=>{if(x.isIntersecting){x.target.classList.add('show');ob.unobserve(x.target)}}),{threshold:.3}).observe(document.getElementById('fastbox'));
+/* ---------- Simulateur ---------- */
+(function(){
+const cv=document.getElementById('cv'),g=cv.getContext('2d'),W=cv.width,H=cv.height;
+const L1=130,L2=110,L3=70,OX=W/2,OY=H-70,SH=40,R=Math.PI/180;
+const $=i=>document.getElementById(i);
+const S={t1:90,t2:0,t3:0,gr:1},cube={x:170,carried:false};let demo=false,steps=[],si=0,t0=0,from=null;
+function fk(t1,t2,t3){const a=t1*R,b=(t1+t2)*R,c=(t1+t2+t3)*R;
+ const e={x:L1*Math.cos(a),y:SH+L1*Math.sin(a)};const w={x:e.x+L2*Math.cos(b),y:e.y+L2*Math.sin(b)};
+ return{e,w,t:{x:w.x+L3*Math.cos(c),y:w.y+L3*Math.sin(c)}}}
+function ik(x,y){const wx=x,wy=y+L3-SH,d2=wx*wx+wy*wy,d=Math.sqrt(d2);
+ if(d>L1+L2-1)return null;
+ const cb=(d2-L1*L1-L2*L2)/(2*L1*L2);let best=null;
+ [1,-1].forEach(s=>{const t2=s*Math.acos(Math.max(-1,Math.min(1,cb)));
+  const t1=Math.atan2(wy,wx)-Math.atan2(L2*Math.sin(t2),L1+L2*Math.cos(t2));
+  const ey=SH+L1*Math.sin(t1);if(!best||ey>best.ey)best={t1:t1/R,t2:t2/R,ey}});
+ return{t1:best.t1,t2:best.t2,t3:-90-best.t1-best.t2}}
+const X=x=>OX+x,Y=y=>OY-y;
+function link(p,q,w,c){g.strokeStyle=c;g.lineWidth=w;g.lineCap='round';g.beginPath();g.moveTo(X(p.x),Y(p.y));g.lineTo(X(q.x),Y(q.y));g.stroke()}
+function dot(p,r,c){g.fillStyle=c;g.beginPath();g.arc(X(p.x),Y(p.y),r,0,7);g.fill()}
+function draw(){
+ g.clearRect(0,0,W,H);
+ g.fillStyle='#0E2A5C';g.fillRect(0,OY,W,H-OY);g.fillStyle='#2F6BFF';g.fillRect(0,OY,W,5);
+ [-170,170].forEach(x=>{g.strokeStyle='#19C39A';g.setLineDash([6,6]);g.lineWidth=2;g.strokeRect(X(x)-22,OY-30,44,30);g.setLineDash([])});
+ g.fillStyle='#19C39A';g.font='700 13px Nunito';g.textAlign='center';g.fillText('B',X(-170),OY-38);g.fillText('A',X(170),OY-38);
+ const f=fk(S.t1,S.t2,S.t3);
+ g.fillStyle='#fff';g.strokeStyle='#0E2A5C';g.lineWidth=3;g.beginPath();g.roundRect(X(-45),OY-SH,90,SH,8);g.fill();g.stroke();
+ const base={x:0,y:SH};
+ link(base,f.e,18,'#2F6BFF');link(f.e,f.w,15,'#19C39A');link(f.w,f.t,12,'#0E2A5C');
+ dot(base,12,'#FFB020');dot(f.e,11,'#FFB020');dot(f.w,10,'#FFB020');
+ const ang=(S.t1+S.t2+S.t3)*R,ux=Math.cos(ang),uy=Math.sin(ang),px=-uy,py=ux,gap=6+S.gr*14;
+ [-1,1].forEach(s=>{const b={x:f.t.x+px*gap*s,y:f.t.y+py*gap*s};link(b,{x:b.x+ux*22,y:b.y+uy*22},6,'#FF7EB6')});
+ link(f.t,{x:f.t.x+px*gap,y:f.t.y+py*gap},5,'#0E2A5C');link(f.t,{x:f.t.x-px*gap,y:f.t.y-py*gap},5,'#0E2A5C');
+ let cx=cube.x,cy=14;if(cube.carried){cx=f.t.x+ux*11;cy=f.t.y+uy*11}
+ g.fillStyle='#FFB020';g.strokeStyle='#8a4a05';g.lineWidth=2;g.fillRect(X(cx)-12,Y(cy)-12,24,24);g.strokeRect(X(cx)-12,Y(cy)-12,24,24);
+ $('o1').textContent=Math.round(S.t1)+'°';$('o2').textContent=Math.round(S.t2)+'°';$('o3').textContent=Math.round(S.t3)+'°';$('o4').textContent=Math.round(S.gr*100)+' %';
+ if(!demo)$('st').innerHTML='Mode manuel · pointe de la pince : <b>x '+Math.round(f.t.x)+' mm, z '+Math.round(f.t.y)+' mm</b>';
+ return f}
+function sync(){$('s1').value=S.t1;$('s2').value=S.t2;$('s3').value=S.t3;$('s4').value=S.gr*100}
+['s1','s2','s3','s4'].forEach(id=>$(id).oninput=()=>{if(demo)return;S.t1=+$('s1').value;S.t2=+$('s2').value;S.t3=+$('s3').value;S.gr=$('s4').value/100;draw()});
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const PL=[['Départ vers A',170,90,1,0,1100],['Descente sur l’objet',170,14,1,0,900],['Fermeture de la pince',170,14,.45,0,600],['Levage',170,100,.45,1,900],['Transfert vers B',-170,100,.45,1,1700],['Descente',-170,14,.45,1,900],['Ouverture : dépose',-170,14,1,2,600],['Retour en position haute',0,150,1,0,1200]];
+function start(){if(demo)return;demo=true;cube.x=170;cube.carried=false;si=0;begin()}
+function begin(){const f=fk(S.t1,S.t2,S.t3);from={x:f.t.x,y:f.t.y,gr:S.gr};t0=performance.now();$('st').innerHTML='Cycle automatique · étape '+(si+1)+'/'+PL.length+' : <b>'+PL[si][0]+'</b>'}
+function tick(now){
+ if(demo){const p=PL[si],k=Math.min(1,(now-t0)/p[5]),e=ease(k);
+  const x=from.x+(p[1]-from.x)*e,y=from.y+(p[2]-from.y)*e,r=ik(x,y);
+  if(r){S.t1=r.t1;S.t2=r.t2;S.t3=r.t3}S.gr=from.gr+(p[3]-from.gr)*e;
+  if(k>=1){if(p[4]===1)cube.carried=true;if(p[4]===2){cube.carried=false;cube.x=p[1]}
+   si++;if(si>=PL.length){demo=false;sync();$('st').innerHTML='Cycle terminé : objet déplacé de A vers B.'}else begin()}
+  sync()}
+ draw();requestAnimationFrame(tick)}
+$('demo').onclick=start;
+$('rst').onclick=()=>{demo=false;cube.x=170;cube.carried=false;Object.assign(S,{t1:90,t2:0,t3:0,gr:1});sync()};
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
